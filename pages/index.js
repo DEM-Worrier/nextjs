@@ -1,8 +1,40 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
+import React ,{useState} from 'react';
+import $ from "jquery";
 
 export default function Home() {
+
+  const [FirstName,setFirstName]=useState("");
+  const [LastName,setLastName]=useState("");
+  const [Email,setEmail]=useState("");
+  const [PhoneNumber,setPhoneNumber]=useState("");
+
+  async function putValue(e)
+  {
+    e.preventDefault();
+    let valueForm = {FirstName,LastName,Email,PhoneNumber};
+
+     fetch('/api/form', {
+      method : 'POST',
+      headers :{ 'Content-Type' : 'application/json'},
+      body : JSON.stringify(valueForm)
+      }).then(response => response.json())
+        .then(data => {
+          if(data.status === 'success')
+          {
+            $("#msg").html("Data Stored");
+            $('#formID').trigger("reset");
+            
+          } 
+          else 
+          {
+            $("#errors").html("Invalid Data");
+          }
+      })
+  }  
+
   return (
     <div className={styles.container}>
       <Head>
@@ -15,41 +47,28 @@ export default function Home() {
         <h1 className={styles.title}>
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
+        <div id="msg"> </div>
+        <p id="alert"></p>
+        <p id="errors"></p>
+        <form id="formID"> 
+          <div className="single-field">
+            <label for="first">First name</label>
+            <input type="text" id="first" name="first" onChange={(e)=>setFirstName(e.target.value)} />
+          </div>
+          <div className="single-field">
+            <label for="last">Last name</label>
+            <input type="text" id="last" name="last" onChange={(e)=>setLastName(e.target.value)} />
+          </div>
+          <div className="single-field">
+            <label for="email">Email</label>
+            <input type="text" id="email" name="email" onChange={(e)=>setEmail(e.target.value)} />
+          </div>
+          <div className="single-field">
+            <label for="phone">Phone Number</label>
+            <input type="text" id="phone" name="phone" onChange={(e)=>setPhoneNumber(e.target.value)} />
+          </div>
+          <button className="form-button" onClick={putValue}>Submit</button>
+        </form>
       </main>
 
       <footer className={styles.footer}>
@@ -64,6 +83,15 @@ export default function Home() {
           </span>
         </a>
       </footer>
+
+      <style jsx>{`
+        #formID{border:1px solid #bdbdbd; padding: 40px; width: 450px;}
+        .single-field{margin-bottom: 20px;}
+        .single-field label{margin-bottom: 5px; display: block;}
+        .single-field input{display: block; width: 100%; border: 1px solid #757575; padding: 10px 20px;}
+        .form-button{display: block; width:100%; border: 1px solid #757575; background: #757575; padding: 10px 25px; font-size: 15px; color: #fff; text-shadow: 0.5px 1px 2px #000; text-transform: uppercase; letter-spacing: 1px; cursor: pointer;}
+      `}</style>
+
     </div>
   )
 }
