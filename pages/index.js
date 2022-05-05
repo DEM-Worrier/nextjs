@@ -11,9 +11,85 @@ export default function Home() {
   const [Email,setEmail]=useState("");
   const [PhoneNumber,setPhoneNumber]=useState("");
 
+  const [FirstNameerr,setFirstNameerr]=useState("");
+  const [LastNameerr,setLastNameerr]=useState("");
+  const [Emailerr,setEmailerr]=useState("");
+  const [PhoneNumbererr,setPhoneNumbererr]=useState("");
   async function putValue(e)
   {
     e.preventDefault();
+    var namecheck=/^[a-zA-Z]+$/;
+    var lnamecheck=/^[a-zA-Z]+$/;
+    if (FirstName==="") {
+        setFirstNameerr("fill the fields!!");
+        return false;
+    }
+    else{
+        if (namecheck.test( FirstName ))
+        {
+            if (/^\s+$/.test(FirstName)) {
+                setFirstNameerr("Enert First name..");
+                return false;
+            }
+        }else{
+            setFirstNameerr("enter a valid name");
+                return false;
+        }
+        setFirstNameerr("");
+    }
+
+  if (LastName==="") {
+      setLastNameerr("fill the fields!!");
+      return false;
+  }
+  else{
+      if (lnamecheck.test( LastName ))
+      {
+          if (/^\s+$/.test(LastName)) {
+              setLastNameerr("Enter Last name");
+              return false;
+          }
+      }else{
+          setLastNameerr("enter a valid last name");
+              return false;
+      }
+      setLastNameerr("");
+  }
+  var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    if (Email==="") {
+        setEmailerr("yo can't leave it blank");
+        return false;
+    }
+    else{
+        if(!regex.test(Email))
+        {
+            var regex_sec=/^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+            if(!regex_sec.test(Email))
+            {
+            setEmailerr("invalid email")
+            return false;
+            }
+        }
+        setEmailerr("");
+    }
+    var cno=/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
+    if (PhoneNumber==="") {
+        setPhoneNumbererr("yo can't leave it blank");
+        return false;
+    }
+    else{
+        if(!cno.test(PhoneNumber))
+        {
+            setPhoneNumbererr("invalid contact no")
+            return false;
+           
+        }
+        setPhoneNumbererr("");
+    }
+
+
+
+
     let valueForm = {FirstName,LastName,Email,PhoneNumber};
 
      fetch('/api/form', {
@@ -53,19 +129,23 @@ export default function Home() {
         <form id="formID"> 
           <div className="single-field">
             <label for="first">First name</label>
-            <input type="text" id="first" name="first" onChange={(e)=>setFirstName(e.target.value)} />
+            <input type="text" id="first" required name="first" onChange={(e)=>setFirstName(e.target.value)} />
+            <span className='text-danger'>{FirstNameerr}</span>
           </div>
           <div className="single-field">
             <label for="last">Last name</label>
             <input type="text" id="last" name="last" onChange={(e)=>setLastName(e.target.value)} />
+            <span className='text-danger'>{LastNameerr}</span>
           </div>
           <div className="single-field">
             <label for="email">Email</label>
             <input type="text" id="email" name="email" onChange={(e)=>setEmail(e.target.value)} />
+            <span className='text-danger'>{Emailerr}</span>
           </div>
           <div className="single-field">
             <label for="phone">Phone Number</label>
             <input type="text" id="phone" name="phone" onChange={(e)=>setPhoneNumber(e.target.value)} />
+            <span className='text-danger'>{PhoneNumbererr}</span>
           </div>
           <button className="form-button" onClick={putValue}>Submit</button>
         </form>
